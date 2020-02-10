@@ -20,8 +20,6 @@ public class MultiClient extends Thread {
 
     @Override
     public void run() {
-        //super.run();
-
         try(
                 // Create server socket with the given port number
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -29,11 +27,13 @@ public class MultiClient extends Thread {
                 BufferedReader in = new BufferedReader(new InputStreamReader((socket.getInputStream())));
                 ){
             String inputLine, outputLine;
-
+            //Creates a new EmailExtractor object
             EmailExtractor emailExtractor = new EmailExtractor();
 
+            // read from the connection socket
             while((inputLine = in.readLine()) != null){
-                outputLine = emailExtractor.test(inputLine);
+                //Takes input from client and sends it to "extractEmail" method in class EmailExtractor
+                outputLine = emailExtractor.extractEmail(inputLine);
                 out.println(inetAddress.getHostAddress() + " " + clientPortNumber + " " + outputLine);
             }
 

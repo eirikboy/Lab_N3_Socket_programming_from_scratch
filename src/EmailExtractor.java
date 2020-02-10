@@ -11,46 +11,53 @@ public class EmailExtractor {
 
     String url;
 
-    public String test(String input) throws IOException {
+    public String extractEmail(String input) throws IOException {
         String outPut = "";
         URL url = new URL(input.trim());
 
-        //Sjekker om nettsiden eksisterer
+        //Check if website exists
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+        //setRequestMethod takes several inputs:GET POST HEAD OPTIONS PUT DELETE TRACE
+        //HEAD requests the HTTP headers from server and don't return a message body.
         httpURLConnection.setRequestMethod("HEAD");
-        int res = httpURLConnection.getResponseCode();
 
+        //A page not found will result in a int with value 404
+        int res = httpURLConnection.getResponseCode();
         if (res == 404){
             return "Code 2: print ‘!!!Server couldn’t find the web page!!!’";
         }
-        int lengde = outPut.length();
 
+        //Several regex attempts
         //String regex ="[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
         //String regex = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
         //String regex = "\\b[A-Za-z0-9+_.-]+@[A-Za-z0-9+_.-]+[.]+[A-Za-z]{2,4}$";
         //String regex = "\\b[\\w.%-]+@[-.\\w]+\\.[A-Za-z]{2,4}\\b";
-        String regex = "\\b[A-Za-z0-9+._-]+@[A-Za-z0-9+._-]+.[A-Za-z0-9]\\b";
+        String regex = "\\b[A-Za-z0-9+._-]+@[A-Za-z0-9+._-]+.[A-Za-z0-9]\\b"; // \b = a word boundry, takes lower and upper case letters, numbers from 0-9 and ._-
 
+        //Creates a compiled representation of a regular expression
+        //As per doc: A regular expression, specified as a string, must first be compiled into an instance of this class.
         Pattern pattern = Pattern.compile(regex);
 
         BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 
         String urlLine = "";
-        int teller = 0;
         while ((urlLine = in.readLine()) != null){
+            //pattern can now be used to create a Matcher object that matches arbitrary charachter
+            //sequences against the regular expression
             Matcher matcher = pattern.matcher(urlLine);
-            teller++;
 
             if (matcher.find()){
+                //adds matching results to output string
                 outPut += matcher.group();
             }
         }
 
+        //If no matches are founds code 1 is returned
         if (outPut.length() == 0 ){
             return "Code 1: print ‘!!!No email address found on the page!!!’.";
         }
 
-        //return lengde + " <- Fra server: " + outPut + " teller: " + teller;
+        //Returns results
         return outPut + " lengde " + outPut.length();
     }
 }
