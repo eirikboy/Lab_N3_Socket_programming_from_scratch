@@ -9,6 +9,7 @@ public class EchoClient {
     public static void main(String[] args) {
         //String hostName = "localhost";
         String hostName = "127.0.0.1";
+        //String hostName = "192.168.1.232";
         int portNumber = 5555;
 
         System.out.println(hostName + " " + portNumber);
